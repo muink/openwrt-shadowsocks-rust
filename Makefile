@@ -26,7 +26,7 @@ define Package/shadowsocks-rust/Default
     SUBMENU:=Web Servers/Proxies
     TITLE:=shadowsocks-rust $(1)
     URL:=https://github.com/shadowsocks/shadowsocks-rust
-    DEPENDS:=$$(RUST_ARCH_DEPENDS)
+    DEPENDS:=$$(RUST_ARCH_DEPENDS) shadowsocks-rust-config
   endef
 
   define Package/shadowsocks-rust-$(1)/install
@@ -35,9 +35,28 @@ define Package/shadowsocks-rust/Default
   endef
 endef
 
-define Package/shadowsocks-rust/config
+define Package/shadowsocks-rust-config
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Web Servers/Proxies
+  TITLE:=shadowsocks-rust config scripts
+  URL:=https://github.com/shadowsocks/shadowsocks-rust
+  DEPENDS:=
+  PKGARCH:=all
+endef
+
+define Package/shadowsocks-rust-config/conffiles
+/etc/config/shadowsocks-rust
+endef
+
+define Package/shadowsocks-rust-config/install
+	$(INSTALL_DIR) $(1)/etc/config/
+	$(INSTALL_DIR) $(1)/etc/init.d/
+endef
+
+define Package/shadowsocks-rust-config/config
 	menu "Features configuration"
-		depends on PACKAGE_shadowsocks-rust
+		depends on PACKAGE_shadowsocks-rust-config
 
 		config SS_RUST_LOCAL_HTTP
 			bool "Allow using HTTP protocol for sslocal"
@@ -113,6 +132,7 @@ define shadowsocks-rust/templates
 endef
 $(eval $(call shadowsocks-rust/templates))
 
+$(eval $(call BuildPackage,shadowsocks-rust-config))
 $(foreach component,$(SHADOWSOCKS_COMPONENTS), \
   $(eval $(call BuildPackage,shadowsocks-rust-$(component))) \
 )
