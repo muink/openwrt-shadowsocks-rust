@@ -16,6 +16,18 @@ PKG_BUILD_DEPENDS:=rust/host
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_SS_RUST_LOCAL_HTTP \
+	CONFIG_SS_RUST_LOCAL_TUNNEL \
+	CONFIG_SS_RUST_LOCAL_SOCKS4 \
+	CONFIG_SS_RUST_LOCAL_REDIR \
+	CONFIG_SS_RUST_LOCAL_DNS \
+	CONFIG_SS_RUST_LOCAL_TUN \
+	CONFIG_SS_RUST_LOCAL_ONLINE_CONFIG \
+	CONFIG_SS_RUST_AEAD_CIPHER_EXTRA \
+	CONFIG_SS_RUST_AEAD_CIPHER_2022 \
+	CONFIG_SS_RUST_AEAD_CIPHER_2022_EXTRA \
+
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 
@@ -99,29 +111,17 @@ define Package/shadowsocks-rust-config/config
 	endmenu
 endef
 
-PKG_CONFIG_DEPENDS:= \
-	SS_RUST_LOCAL_HTTP \
-	SS_RUST_LOCAL_TUNNEL \
-	SS_RUST_LOCAL_SOCKS4 \
-	SS_RUST_LOCAL_REDIR \
-	SS_RUST_LOCAL_DNS \
-	SS_RUST_LOCAL_TUN \
-	SS_RUST_LOCAL_ONLINE_CONFIG \
-	SS_RUST_AEAD_CIPHER_EXTRA \
-	SS_RUST_AEAD_CIPHER_2022 \
-	SS_RUST_AEAD_CIPHER_2022_EXTRA \
-
 RUST_PKG_FEATURES:=$(subst $(space),$(comma),$(strip \
-	$(if $(SS_RUST_LOCAL_HTTP),local-http) \
-	$(if $(SS_RUST_LOCAL_TUNNEL),local-tunnel) \
-	$(if $(SS_RUST_LOCAL_SOCKS4),local-socks4) \
-	$(if $(SS_RUST_LOCAL_REDIR),local-redir) \
-	$(if $(SS_RUST_LOCAL_DNS),local-dns) \
-	$(if $(SS_RUST_LOCAL_TUN),local-tun) \
-	$(if $(SS_RUST_LOCAL_ONLINE_CONFIG),local-online-config) \
-	$(if $(SS_RUST_AEAD_CIPHER_EXTRA),aead-cipher-extra) \
-	$(if $(SS_RUST_AEAD_CIPHER_2022),aead-cipher-2022) \
-	$(if $(SS_RUST_AEAD_CIPHER_2022_EXTRA),aead-cipher-2022-extra) \
+	$(if $(CONFIG_SS_RUST_LOCAL_HTTP),local-http) \
+	$(if $(CONFIG_SS_RUST_LOCAL_TUNNEL),local-tunnel) \
+	$(if $(CONFIG_SS_RUST_LOCAL_SOCKS4),local-socks4) \
+	$(if $(CONFIG_SS_RUST_LOCAL_REDIR),local-redir) \
+	$(if $(CONFIG_SS_RUST_LOCAL_DNS),local-dns) \
+	$(if $(CONFIG_SS_RUST_LOCAL_TUN),local-tun) \
+	$(if $(CONFIG_SS_RUST_LOCAL_ONLINE_CONFIG),local-online-config) \
+	$(if $(CONFIG_SS_RUST_AEAD_CIPHER_EXTRA),aead-cipher-extra) \
+	$(if $(CONFIG_SS_RUST_AEAD_CIPHER_2022),aead-cipher-2022) \
+	$(if $(CONFIG_SS_RUST_AEAD_CIPHER_2022_EXTRA),aead-cipher-2022-extra) \
 ))
 
 SHADOWSOCKS_COMPONENTS:=sslocal ssserver ssurl ssmanager ssservice
