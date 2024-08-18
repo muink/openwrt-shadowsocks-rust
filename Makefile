@@ -32,18 +32,29 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 
 define Package/shadowsocks-rust/Default
+  TITLE_sslocal:=client provides HTTP/SOCKS proxy, port forwarding, transparent proxy and tun.
+  TITLE_ssserver:=
+  TITLE_ssmanager:=server manager.
+  TITLE_ssservice:=single bundled of local,server,manager. also used to generate safed secured password.
+  TITLE_ssurl:=for encoding/decoding SIP002 URLs.
+  LN_sslocal:=y
+  LN_ssserver:=y
+  LN_ssmanager:=y
+
   define Package/shadowsocks-rust-$(1)
     SECTION:=net
     CATEGORY:=Network
     SUBMENU:=Web Servers/Proxies
     TITLE:=shadowsocks-rust $(1). $$(TITLE_$(1))
     URL:=https://github.com/shadowsocks/shadowsocks-rust
-    DEPENDS:=$$(RUST_ARCH_DEPENDS)
+    DEPENDS:=$$(RUST_ARCH_DEPENDS) $$(if $$(LN_$(1)),+shadowsocks-rust-ssservice)
   endef
 
   define Package/shadowsocks-rust-$(1)/install
 	$$(INSTALL_DIR) $$(1)/usr/bin/
-	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/bin/$(1) $$(1)/usr/bin/
+	$$(if $$(LN_$(1)), \
+	$$(LN) ssservice $$(1)/usr/bin/$(1), \
+	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/bin/$(1) $$(1)/usr/bin/ )
   endef
 endef
 
@@ -130,11 +141,6 @@ RUST_PKG_FEATURES:=$(subst $(space),$(comma),$(strip \
 ))
 
 SHADOWSOCKS_COMPONENTS:=sslocal ssserver ssmanager ssservice ssurl
-TITLE_sslocal:=client provides HTTP/SOCKS proxy, port forwarding, transparent proxy and tun.
-TITLE_ssserver:=
-TITLE_ssmanager:=server manager.
-TITLE_ssservice:=single bundled of local,server,manager. also used to generate safed secured password.
-TITLE_ssurl:=for encoding/decoding SIP002 URLs.
 define shadowsocks-rust/templates
   $(foreach component,$(SHADOWSOCKS_COMPONENTS),
     $(call Package/shadowsocks-rust/Default,$(component))
