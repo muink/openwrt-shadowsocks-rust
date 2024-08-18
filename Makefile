@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
 PKG_VERSION:=1.20.4
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
@@ -66,10 +66,6 @@ define Package/shadowsocks-rust-config
   URL:=https://github.com/shadowsocks/shadowsocks-rust
   DEPENDS:= +shadowsocks-rust-ssservice #+shadowsocks-rust-ssurl
   PKGARCH:=all
-endef
-
-define Package/shadowsocks-rust-config/conffiles
-/etc/config/shadowsocks-rust
 endef
 
 define Package/shadowsocks-rust-config/install
