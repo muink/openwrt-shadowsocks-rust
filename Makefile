@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
 PKG_VERSION:=1.20.4
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
@@ -36,9 +36,9 @@ define Package/shadowsocks-rust/Default
     SECTION:=net
     CATEGORY:=Network
     SUBMENU:=Web Servers/Proxies
-    TITLE:=shadowsocks-rust $(1)
+    TITLE:=shadowsocks-rust $(1). $$(TITLE_$(1))
     URL:=https://github.com/shadowsocks/shadowsocks-rust
-    DEPENDS:=$$(RUST_ARCH_DEPENDS) shadowsocks-rust-config
+    DEPENDS:=$$(RUST_ARCH_DEPENDS)
   endef
 
   define Package/shadowsocks-rust-$(1)/install
@@ -53,7 +53,7 @@ define Package/shadowsocks-rust-config
   SUBMENU:=Web Servers/Proxies
   TITLE:=shadowsocks-rust config scripts
   URL:=https://github.com/shadowsocks/shadowsocks-rust
-  DEPENDS:=
+  DEPENDS:= +shadowsocks-rust-ssservice #+shadowsocks-rust-ssurl
   PKGARCH:=all
 endef
 
@@ -64,6 +64,9 @@ endef
 define Package/shadowsocks-rust-config/install
 	$(INSTALL_DIR) $(1)/etc/config/
 	$(INSTALL_DIR) $(1)/etc/init.d/
+
+	$(INSTALL_DIR) $(1)/usr/lib/shadowsocks-rust/
+	echo -n $(RUST_PKG_FEATURES) > $(1)/usr/lib/shadowsocks-rust/features
 endef
 
 define Package/shadowsocks-rust-config/config
@@ -77,6 +80,8 @@ define Package/shadowsocks-rust-config/config
 		config SS_RUST_LOCAL_TUNNEL
 			bool "Allow using tunnel protocol for sslocal"
 			default y
+			help
+			  for port forwarding.
 
 		config SS_RUST_LOCAL_SOCKS4
 			bool "Allow using SOCKS4/4a protocol for sslocal"
@@ -124,7 +129,12 @@ RUST_PKG_FEATURES:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SS_RUST_AEAD_CIPHER_2022_EXTRA),aead-cipher-2022-extra) \
 ))
 
-SHADOWSOCKS_COMPONENTS:=sslocal ssserver ssurl ssmanager ssservice
+SHADOWSOCKS_COMPONENTS:=sslocal ssserver ssmanager ssservice ssurl
+TITLE_sslocal:=client provides HTTP/SOCKS proxy, port forwarding, transparent proxy and tun.
+TITLE_ssserver:=
+TITLE_ssmanager:=server manager.
+TITLE_ssservice:=single bundled of local,server,manager. also used to generate safed secured password.
+TITLE_ssurl:=for encoding/decoding SIP002 URLs.
 define shadowsocks-rust/templates
   $(foreach component,$(SHADOWSOCKS_COMPONENTS),
     $(call Package/shadowsocks-rust/Default,$(component))
