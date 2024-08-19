@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
 PKG_VERSION:=1.20.4
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
@@ -17,11 +17,13 @@ PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
 PKG_CONFIG_DEPENDS:= \
+	CONFIG_SS_RUST_HICKORY_DNS \
 	CONFIG_SS_RUST_LOCAL_HTTP \
 	CONFIG_SS_RUST_LOCAL_TUNNEL \
 	CONFIG_SS_RUST_LOCAL_SOCKS4 \
 	CONFIG_SS_RUST_LOCAL_REDIR \
 	CONFIG_SS_RUST_LOCAL_DNS \
+	CONFIG_SS_RUST_LOCAL_FAKE_DNS \
 	CONFIG_SS_RUST_LOCAL_TUN \
 	CONFIG_SS_RUST_LOCAL_ONLINE_CONFIG \
 	CONFIG_SS_RUST_AEAD_CIPHER_EXTRA \
@@ -80,6 +82,10 @@ define Package/shadowsocks-rust-config/config
 	menu "Features configuration"
 		depends on PACKAGE_shadowsocks-rust-config
 
+		config SS_RUST_HICKORY_DNS
+			bool "Uses hickory-resolver as DNS resolver instead of tokio's builtin."
+			default n
+
 		config SS_RUST_LOCAL_HTTP
 			bool "Allow using HTTP protocol for sslocal"
 			default y
@@ -92,6 +98,7 @@ define Package/shadowsocks-rust-config/config
 
 		config SS_RUST_LOCAL_SOCKS4
 			bool "Allow using SOCKS4/4a protocol for sslocal"
+			default n
 
 		config SS_RUST_LOCAL_REDIR
 			bool "Allow using redir (transparent proxy) protocol for sslocal"
@@ -99,10 +106,14 @@ define Package/shadowsocks-rust-config/config
 
 		config SS_RUST_LOCAL_DNS
 			bool "Allow using dns protocol for sslocal"
-			default y
+			default n
 			help
 			  serves as a DNS server proxying queries to local or
 			  remote DNS servers by ACL rules.
+
+		config SS_RUST_LOCAL_FAKE_DNS
+			bool "FakeDNS, allocating an IP address for each individual Query from a specific IP pool"
+			default n
 
 		config SS_RUST_LOCAL_TUN
 			bool "TUN interface support for sslocal"
@@ -124,11 +135,13 @@ define Package/shadowsocks-rust-config/config
 endef
 
 RUST_PKG_FEATURES:=$(subst $(space),$(comma),$(strip \
+	$(if $(CONFIG_SS_RUST_HICKORY_DNS),hickory-dns) \
 	$(if $(CONFIG_SS_RUST_LOCAL_HTTP),local-http) \
 	$(if $(CONFIG_SS_RUST_LOCAL_TUNNEL),local-tunnel) \
 	$(if $(CONFIG_SS_RUST_LOCAL_SOCKS4),local-socks4) \
 	$(if $(CONFIG_SS_RUST_LOCAL_REDIR),local-redir) \
 	$(if $(CONFIG_SS_RUST_LOCAL_DNS),local-dns) \
+	$(if $(CONFIG_SS_RUST_LOCAL_FAKE_DNS),local-fake-dns) \
 	$(if $(CONFIG_SS_RUST_LOCAL_TUN),local-tun) \
 	$(if $(CONFIG_SS_RUST_LOCAL_ONLINE_CONFIG),local-online-config) \
 	$(if $(CONFIG_SS_RUST_AEAD_CIPHER_EXTRA),aead-cipher-extra) \
