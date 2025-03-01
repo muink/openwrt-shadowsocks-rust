@@ -37,6 +37,9 @@ PKG_CONFIG_DEPENDS:= \
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 
+# Don't ignore Cargo.lock
+Build/Compile:=$(call Build/Compile/Cargo,,--locked)
+
 define Package/shadowsocks-rust/Default
   TITLE_sslocal:=client provides HTTP/SOCKS proxy, port forwarding, transparent proxy and tun.
   TITLE_ssserver:=
