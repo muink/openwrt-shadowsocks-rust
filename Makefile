@@ -40,6 +40,10 @@ include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 # Don't ignore Cargo.lock
 Build/Compile:=$(call Build/Compile/Cargo,,--locked)
 
+# Platform-specific features
+# $(TOPDIR)/feeds/packages/lang/rust/rust-values.mk
+RUST_ARCH_DEPENDS:=@(aarch64||arm||i386||i686||powerpc64||riscv64||x86_64)
+
 define Package/shadowsocks-rust/Default
   TITLE_sslocal:=client provides HTTP/SOCKS proxy, port forwarding, transparent proxy and tun.
   TITLE_ssserver:=
