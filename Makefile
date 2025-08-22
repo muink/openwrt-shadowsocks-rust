@@ -38,7 +38,9 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 
 # Don't ignore Cargo.lock
-Build/Compile:=$(call Build/Compile/Cargo,,--locked)
+ifeq ($(shell grep -o 'RUST_PKG_LOCKED' $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk 2>/dev/null),)
+	Build/Compile:=$(call Build/Compile/Cargo,,--locked)
+endif
 
 # Platform-specific features
 # $(TOPDIR)/feeds/packages/lang/rust/rust-values.mk
