@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 #
-# Copyright (C) 2024 Anya Lin <hukk1996@gmail.com>
+# Copyright (C) 2024-2025 Anya Lin <hukk1996@gmail.com>
 
 include $(TOPDIR)/rules.mk
 
@@ -44,7 +44,7 @@ endif
 
 # Platform-specific features
 # $(TOPDIR)/feeds/packages/lang/rust/rust-values.mk
-RUST_ARCH_DEPENDS:=@(aarch64||arm||i386||i686||powerpc64||riscv64||x86_64)
+# RUST_ARCH_DEPENDS:=@(aarch64||arm||i386||i686||mips||mipsel||mips64||mips64el||powerpc64||riscv64||x86_64)
 
 define Package/shadowsocks-rust/Default
   TITLE_sslocal:=client provides HTTP/SOCKS proxy, port forwarding, transparent proxy and tun.
